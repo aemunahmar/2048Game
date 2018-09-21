@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+		<title>2048</title>
+	<style>
+		body {
+			  margin: 0;
+			  padding: 10px;
+			  background: #faf8ef;
+			  color: #ffffff;
+			  font-family: "Helvetica Neue", Arial, sans-serif;
+			  font-size: 50px; 
+			  font-weight: bolder;
+			}
+
+			.grid-container {
+			  position: absolute;
+			  z-index: 1; 
+			}
+
+			.grid-row {
+			  margin-bottom: 15px; 
+			}
+
+  			.grid-row:last-child {
+    			margin-bottom: 0; 
+			}	
+
+			.grid-row:after {
+				content: "";
+			    display: block;
+			    clear: both;
+			}
+
+			.grid-cell {
+			  width: 106.25px;
+			  height: 106.25px;
+			  margin-right: 15px;
+			  float: left;
+			  border-radius: 3px;
+			  text-align: center;
+			  background: rgba(238, 228, 218, 0.35); 
+			}
+
+			.grid-cell:last-child {
+			    margin-right: 0; 
+			}
+
+			.game-container {
+				  margin-top: 40px;
+				  position: relative;
+				  padding: 15px;
+				  cursor: default;
+				  background: #bbada0;
+				  border-radius: 6px;
+				  width: 500px;
+				  height: 500px;
+				  -webkit-box-sizing: border-box;
+				  -moz-box-sizing: border-box;
+				  box-sizing: border-box; 
+			}
+		</style>
+	</head>
+	<body>
+		<div class="game-container">
+			<div class="grid-container">
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r0c0"></div>
+		          <div class="grid-cell" id = "r0c1"></div>
+		          <div class="grid-cell" id = "r0c2"></div>
+		          <div class="grid-cell" id = "r0c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r1c0"></div>
+		          <div class="grid-cell" id = "r1c1"></div>
+		          <div class="grid-cell" id = "r1c2"></div>
+		          <div class="grid-cell" id = "r1c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r2c0"></div>
+		          <div class="grid-cell" id = "r2c1"></div>
+		          <div class="grid-cell" id = "r2c2"></div>
+		          <div class="grid-cell" id = "r2c3"></div>
+		        </div>
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r3c0"></div>
+		          <div class="grid-cell" id = "r3c1"></div>
+		          <div class="grid-cell" id = "r3c2"></div>
+		          <div class="grid-cell" id = "r3c3"></div>
+		        </div>
+	      	</div>
+	     </div>
+	<script>
+	var grid = [["x", "x", "x", "x"], 
+				["x", "x", "x", "x"],
+				["x", "x", "x", "x"],
+				["x", "x", "x", "x"]];
+	/*var initGrid = function(){			
+		var randRow = Math.floor(Math.random() * 4);
+		var randCol = Math.floor(Math.random() * 4);	
+		grid[randRow][randCol] = "2";
+		var secondRow = Math.floor(Math.random() * 4);
+		var secondCol = Math.floor(Math.random() * 4);
+		while(secondRow === randRow && secondCol === randCol){
+			var secondRow = Math.floor(Math.random() * 4);
+			var secondCol = Math.floor(Math.random() * 4);
+		}
+		grid[secondRow][secondCol] = "2"
+	}*/
+	
+	var initGrid = function(){
+		addNew2();
+		addNew2();
+	}
+	
+	var addNew2 = function(){
+		var randRow = Math.floor(Math.random() * 4); 
+		var randCol = Math.floor(Math.random() * 4); 
+		var alreadyThere = grid[randRow][randCol];
+		while(alreadyThere != "x"){
+			randRow = Math.floor(Math.random() * 4); 
+			randCol = Math.floor(Math.random() * 4); 
+			alreadyThere = grid[randRow][randCol]
+		}
+		grid[randRow][randCol] = "2"
+	}
+
+	var shiftLeft = function(){
+		for(var row = 0; row < grid.length; row++){
+			for(var col = 0; col < grid[row].length; col++){
+				if(col === 0){
+					continue;
+				}else if(grid[row][col] === "x"){
+					continue;
+				} 
+				if(grid[row][col - 1] === "x"){
+					grid[row][col - 1] = grid[row][col];
+					grid[row][col] = "x";
+					continue;
+				} else if(grid[row][col] === grid[row][col - 1]){
+					var numValue = parseInt(grid[row][col]);
+					grid[row][col - 1] = (numValue * 2).toString();
+					grid[row][col] = "x";
+				}		
+			}	
+		}
+	}
+	var shiftRight = function(){
+		for(var col = 0; col < grid.length; col++){
+			for(var row = 0; row < grid[col].length; row++){
+				if(col === 3){
+					continue;
+				}else if(grid[row][col] === "x"){
+					continue;
+				} 
+				if(grid[row][col + 1] === "x"){
+					grid[row][col + 1] = grid[row][col];
+					grid[row][col] = "x";
+					continue;
+				} else if(grid[row][col] === grid[row][col + 1]){
+					var numValue = parseInt(grid[row][col]);
+					grid[row][col + 1] = (numValue * 2).toString();
+					grid[row][col] = "x";
+				}		
+			}	
+		}
+	}
+	var shiftUp = function(){
+		for(var row = 0; row < grid.length; row++){
+			for(var col = 0; col < grid[row].length; col++){
+				if(row === 0){
+					continue;
+				}else if(grid[row][col] === "x"){
+					continue;
+				} 
+				if(grid[row - 1][col] === "x"){
+					grid[row - 1][col] = grid[row][col];
+					grid[row][col] = "x";
+					continue;
+				} else if(grid[row][col] === grid[row - 1][col]){
+					var numValue = parseInt(grid[row][col]);
+					grid[row - 1][col] = (numValue * 2).toString();
+					grid[row][col] = "x";
+				}		
+			}	
+		}
+	}
+	var shiftDown = function(){
+		for(var col = 3; col >= 0; col--){
+			for(var row = 3; row >= 0; row--){
+				if(row === 3){
+					continue;
+				}else if(grid[row][col] === "x"){
+					continue;
+				} 
+				if(grid[row + 1][col] === "x"){
+					grid[row + 1][col] = grid[row][col];
+					grid[row][col] = "x";
+					continue; 
+				} else if(grid[row][col] === grid[row + 1][col]){
+					var numValue = parseInt(grid[row][col]);
+					grid[row + 1][col] = (numValue * 2).toString();
+					grid[row][col] = "x";
+				}		
+			}	
+		}
+	}	
+	var scorePoint = function(){
+		
+	}
+				/*if(col === 0){
+					continue;
+				} else {
+					var thisTile = grid[row][col];
+					var leftTile = grid[row][col - 1];
+					if(thisTile === "x"){
+						continue;
+					}
+					if(leftTile === "x"){
+						grid[row][col - 1] = thisTile
+					
+					}
+				}
+			grid[row][col] = "2";*/
+			
+	initGrid();
+	
+	var checkKey = function(e){
+		if(e.keyCode === 37){
+			shiftLeft();
+			paintGrid();
+		}else if(e.keyCode === 39){
+			shiftRight();
+			paintGrid();
+		} else if(e.keyCode === 38){
+			shiftUp();
+			paintGrid();
+		} else if(e.keyCode === 40){
+			shiftDown();
+			paintGrid();
+		}
+		addNew2();
+		paintGrid();
+	}
+	document.onkeydown = checkKey;
+	var paintGrid = function(){
+		for(var row = 0; row < 4; row++){
+			for(var col = 0; col < 4; col++){
+				var squareId = "#r"+row+"c"+col;
+				if(grid[row][col] === "x"){
+					$(squareId).html("");
+					$(squareId).css("background-color", "rgba(238, 228, 218, 0.35)")
+				} else {
+					$(squareId).html(grid[row][col]);
+					if(grid[row][col] === "2"){
+						$(squareId).css("background-color", "#FFE4C4")
+					}else if(grid[row][col] === "4"){
+						$(squareId).css("background-color", "#DEB887")
+					} else if(grid[row][col] === "8"){
+						$(squareId).css("background-color", "#FF6666")
+					} else if(grid[row][col] === "16"){
+						$(squareId).css("background-color", "#FF3333")
+					} else if(grid[row][col] === "32"){
+						$(squareId).css("background-color", "#D11919")
+					} else if(grid[row][col] === "64"){
+						$(squareId).css("background-color", "#FF0000")
+					} else if(grid[row][col] === "128"){
+						$(squareId).css("background-color", "#FFDB4D")
+					} else if(grid[row][col] === "256"){
+						$(squareId).css("background-color", "#FFD119")
+					} else if(grid[row][col] === "512"){
+						$(squareId).css("background-color", "#FFFF00")
+					} else if(grid[row][col] === "1024"){
+						$(squareId).css("background-color", "#CCCC00")
+					} else if(grid[row][col] === "2048"){
+						$(squareId).css("background-color", "#FFCC00")
+					}
+				}	
+			}
+		}	
+	}
+	
+	paintGrid();
+	
+			
+		 
+	</script>
+	</body>
+
+
+</html>
+
+
+
+    
